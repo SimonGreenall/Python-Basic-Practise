@@ -91,7 +91,7 @@ class Bank():#设计一个银行管理系统
     def deposit(self,user):  #存钱
           self.add=int(input("存多少:")) #输入存多少钱，将存的钱放入self.add,注意输入的是字符串，要转换为整型
           with open(self.file_name,'w+') as file_object: #以读写模式打开数据库文件，并把它作为file_object对象
-                lines=file_object.read() #从文件中读取每一行，并将它保存到lines列表中，readlines()返回一个字符串列表
+                lines=file_object.readlines() #从文件中读取每一行，并将它保存到lines列表中，readlines()返回一个字符串列表
                 for line in lines: #遍历这个列表，看看要存钱的客户有没有开户
                       USER=json.loads(line) #将存储的字符串转换为字典
                       if(user['姓名']==USER['姓名']): #如果找到了就说明开过户了
@@ -102,7 +102,7 @@ class Bank():#设计一个银行管理系统
     def withdraw(self,user): #取钱
           self.reduce=int(input("取多少:")) #输入取多少钱，将要取的钱放入self.reduce,注意输入的是字符串，要转换为整型
           with open(self.file_name,'w+') as file_object: #以读写模式打开数据库文件，并把它作为file_object对象
-                lines=file_object.read() #从文件中读取每一行，并将它保存到lines列表中
+                lines=file_object.readlines() #从文件中读取每一行，并将它保存到lines列表中
                 for line in lines: #遍历这个列表，看看要取钱的客户有没有开户
                       USER=json.loads(line) #将存储的字符串转换为字典
                       if(user['姓名']==USER['姓名']): #如果找到了就说明开过户了
