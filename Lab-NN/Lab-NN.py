@@ -59,31 +59,59 @@ class NeutralNetwork():
          assert(isinstance(cost, float))
          return cost
     
-    def backward_propagation(self,parameters,cache,X,Y):
-         #输入样本的数量
-         m=X.shape[1]
-         # 首先，从字典“parameters”中检索W1和W2
-         W1=parameters["W1"]
-         W2=parameters["W2"]
-         #  从字典“cache”中检索A1和A2
+    def compute_cost_with_regularization(self,A2,Y,parameters,lambd):
+         m=Y.shape[1] #样本数量存到m里去
+         W1 = parameters["W1"]
+         W2 = parameters["W2"]
+
+         L2_regularization_cost = lambd * (np.sum(np.square(W1)) + np.sum(np.square(W2))) / (2 * m) #L2正则项
+         cost = self.compute_cost(A2,Y) + L2_regularization_cost #正则化损失
+         return cost
+    
+#     def backward_propagation(self,parameters,cache,X,Y): #反向传播(未使用正则化)
+#          #输入样本的数量
+#          m=X.shape[1]
+#          # 首先，从字典“parameters”中检索W1和W2
+#          W1=parameters["W1"]
+#          W2=parameters["W2"]
+#          #  从字典“cache”中检索A1和A2
+#          A1=cache["A1"]
+#          A2=cache["A2"]
+#          # 反向传播:计算 dW1、db1、dW2、db2
+#          dZ2= A2 - Y
+#          dW2 = 1 / m * np.dot(dZ2,A1.T)
+#          db2 = 1 / m * np.sum(dZ2,axis=1,keepdims=True)
+#          dZ1 = np.dot(W2.T,dZ2) * (1-np.power(A1,2))
+#          dW1 = 1 / m * np.dot(dZ1,X.T)
+#          db1 = 1 / m * np.sum(dZ1,axis=1,keepdims=True)
+
+#          grads = {"dW1": dW1,
+#                   "db1": db1,
+#                   "dW2": dW2,
+#                   "db2": db2}
+         
+#          return grads
+    
+    def backward_propagation_with_regularization(self, X, Y, cache, parameters,lambd): #正则化反向传播
+         m = X.shape[1] #输入样本数量
          A1=cache["A1"]
          A2=cache["A2"]
-         # 反向传播:计算 dW1、db1、dW2、db2
-         dZ2= A2 - Y
-         dW2 = 1 / m * np.dot(dZ2,A1.T)
-         db2 = 1 / m * np.sum(dZ2,axis=1,keepdims=True)
-         dZ1 = np.dot(W2.T,dZ2) * (1-np.power(A1,2))
-         dW1 = 1 / m * np.dot(dZ1,X.T)
-         db1 = 1 / m * np.sum(dZ1,axis=1,keepdims=True)
-
-         grads = {"dW1": dW1,
-                  "db1": db1,
-                  "dW2": dW2,
-                  "db2": db2}
-         
+         W1=parameters["W1"]
+         W2=parameters["W2"]
+         dZ2 = A2 - Y
+         dW2 = (1 / m) * np.dot(dZ2,A1.T) + ((lambd * W2) / m)
+         db2 = (1 / m) * np.sum(dZ2,axis=1,keepdims=True)
+         dA1 = np.dot(W2.T,dZ2)
+         dZ1 = np.multiply(dA1,np.int64(A1 > 0))
+         dW1 = (1 / m) * np.dot(dZ1,X.T) + ((lambd * W1) / m)
+         db1 = (1 / m) * np.sum(dZ1,axis=1,keepdims=True)
+         grads = { "dW1": dW1, 
+                   "db1": db1, 
+                   "dW2": dW2, 
+                   "db2": db2}
          return grads
     
-    def update_parameters(self,parameters, grads, learning_rate = 1.2):
+    def update_parameters(self,parameters, grads, learning_rate):
          # 从字典“parameters”中检索每个参数
          W1 = parameters["W1"]
          b1 = parameters["b1"]
@@ -109,7 +137,8 @@ class NeutralNetwork():
          
          return parameters
     
-    def train(self,X,Y,epoch):
+    def train(self,X,Y,epoch,lambd,learning_rate):
+         losses = []
          parameters = self.initialize_parameters()
          W1 = parameters["W1"]
          b1 = parameters["b1"]
@@ -122,13 +151,19 @@ class NeutralNetwork():
                    #前向传播
                    A2, cache = self.forward_propagation(X, parameters)
                    #计算成本
-                   cost = self.compute_cost(A2, Y)
+                   cost = self.compute_cost_with_regularization(A2,Y,parameters,lambd)
                    #反向传播
-                   grads = self.backward_propagation(parameters, cache, X, Y)
+                   grads = self.backward_propagation_with_regularization(X, Y, cache, parameters,lambd)
                    #更新参数
-                   parameters = self.update_parameters(parameters, grads)
+                   parameters = self.update_parameters(parameters, grads, learning_rate)
+
+                   losses.append(cost)
               
               print ("Cost after epoch %i: %f" %(i, cost))
+              plt.plot(losses)
+              plt.xlabel('epoch')
+              plt.ylabel('loss')
+              plt.show()
 
          return parameters
     
@@ -142,4 +177,4 @@ class NeutralNetwork():
 lab_nn=NeutralNetwork()
 x=np.eye(8)
 y=np.eye(8)
-lab_nn.train(x,y,10)
+lab_nn.train(x,y,10,1,1.2)
