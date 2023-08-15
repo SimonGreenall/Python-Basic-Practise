@@ -24,8 +24,6 @@ def compute_indexes(predicted,expected): #模块化计算性能指标
 
 
 def plot(save_fig):
-	plt.xlabel('iteration')
-	plt.ylabel('loss')
 	plt.grid()
 	plt.savefig(save_fig)
 	plt.show()
@@ -235,7 +233,8 @@ class TUNING():
 		self.losses_all_beta1 = []
 		self.losses_all_beta2 = []
 		self.losses_all_batch_size = []
-		self.fig = plt.figure()
+		self.fig, self.axs = plt.subplots(1,5,figsize=(45,5))
+		
 	
 	def lr_tuning(self):
 		#学习率调参
@@ -246,21 +245,20 @@ class TUNING():
 			train(self.x, self.y, 10, learning_rate, 1, 'cee', 'SGD', 0.9, 0.999,losses)
 			self.losses_all_lr.append(losses)
 		i = 0
-		ax = self.fig.add_subplot(1,5,1)
 		print("start ploting loss with learning rate change")
 		for loss in self.losses_all_lr:
 			i += 1
 			if (i==1):
-				ax.plot(loss,color='r',label='learning_rate='+str(self.learning_rates[i-1]))
+				self.axs[0].plot(loss,color='r',label='learning_rate='+str(self.learning_rates[i-1]))
 			elif(i==2):
-				ax.plot(loss,color='g',linestyle='--',label='learning_rate='+str(self.learning_rates[i-1]))
+				self.axs[0].plot(loss,color='g',linestyle='--',label='learning_rate='+str(self.learning_rates[i-1]))
 			elif(i==3):
-				ax.plot(loss,color='b',linestyle='--',marker='*',label='learning_rate='+str(self.learning_rates[i-1]))
+				self.axs[0].plot(loss,color='b',linestyle='--',marker='*',label='learning_rate='+str(self.learning_rates[i-1]))
 			elif(i==4):
-				ax.plot(loss,color='y',linestyle='-.',label='learning_rate='+str(self.learning_rates[i-1]))
+				self.axs[0].plot(loss,color='y',linestyle='-.',label='learning_rate='+str(self.learning_rates[i-1]))
 			elif(i==5):
-				ax.plot(loss,color='k',linestyle=':',label='learning_rate='+str(self.learning_rates[i-1]))						
-			ax.legend(loc="upper right")
+				self.axs[0].plot(loss,color='k',linestyle=':',label='learning_rate='+str(self.learning_rates[i-1]))						
+			self.axs[0].legend(loc="upper right")
 		# plot('F:/Python-project/Python-Basic-Practise/Lab-NN/lhr_origin/figs/l_r')
 
 	def decay_tuning(self):
@@ -272,21 +270,20 @@ class TUNING():
 			train(self.x, self.y, 10, 1.2, decay_rate, 'cee', 'SGD', 0.9, 0.999, losses)
 			self.losses_all_decay.append(losses)
 		i = 0
-		ax = self.fig.add_subplot(1,5,2)
 		print("start ploting loss with decay rate change")
 		for loss in self.losses_all_decay:
 			i += 1
 			if (i==1):
-				ax.plot(loss,color='r',label='decay_rate='+str(self.decay_rates[i-1]))
+				self.axs[1].plot(loss,color='r',label='decay_rate='+str(self.decay_rates[i-1]))
 			elif(i==2):
-				ax.plot(loss,color='g',linestyle='--',label='decay_rate='+str(self.decay_rates[i-1]))
+				self.axs[1].plot(loss,color='g',linestyle='--',label='decay_rate='+str(self.decay_rates[i-1]))
 			elif(i==3):
-				ax.plot(loss,color='b',linestyle='--',marker='*',label='decay_rate='+str(self.decay_rates[i-1]))
+				self.axs[1].plot(loss,color='b',linestyle='--',marker='*',label='decay_rate='+str(self.decay_rates[i-1]))
 			elif(i==4):
-				ax.plot(loss,color='y',linestyle='-.',label='decay_rate='+str(self.decay_rates[i-1]))
+				self.axs[1].plot(loss,color='y',linestyle='-.',label='decay_rate='+str(self.decay_rates[i-1]))
 			elif(i==5):
-				ax.plot(loss,color='k',linestyle=':',label='decay_rate='+str(self.decay_rates[i-1]))						
-			ax.legend(loc="upper right")
+				self.axs[1].plot(loss,color='k',linestyle=':',label='decay_rate='+str(self.decay_rates[i-1]))						
+			self.axs[1].legend(loc="upper right")
 		# plot('F:/Python-project/Python-Basic-Practise/Lab-NN/lhr_origin/figs/d_r')
 
 	def loss_function_tuning(self):
@@ -298,17 +295,16 @@ class TUNING():
 			train(self.x, self.y, 10, 1.2, 0.98, loss_function, 'SGD', 0.9, 0.999, losses)
 			self.losses_all_lf.append(losses)
 		i = 0
-		ax = self.fig.add_subplot(1,5,3)
 		print("start ploting loss with loss_function change")
 		for loss in self.losses_all_lf:
 			i += 1
 			if (i==1):
-				ax.plot(loss,color='r',label='loss_function='+self.loss_functions[i-1])
+				self.axs[2].plot(loss,color='r',label='loss_function='+self.loss_functions[i-1])
 			elif(i==2):
-				ax.plot(loss,color='g',linestyle='--',label='loss_function='+self.loss_functions[i-1])
+				self.axs[2].plot(loss,color='g',linestyle='--',label='loss_function='+self.loss_functions[i-1])
 			elif(i==3):
-				ax.plot(loss,color='b',linestyle='--',marker='*',label='loss_function='+self.loss_functions[i-1])					
-			ax.legend(loc="upper right")
+				self.axs[2].plot(loss,color='b',linestyle='--',marker='*',label='loss_function='+self.loss_functions[i-1])					
+			self.axs[2].legend(loc="upper right")
 		# plot('F:/Python-project/Python-Basic-Practise/Lab-NN/lhr_origin/figs/l_f')
 
 	def beta1_tuning(self):
@@ -320,21 +316,20 @@ class TUNING():
 			train(self.x, self.y, 10, 1.2, 1, 'cee', 'ADAM', beta1_rate, 0.999,losses)
 			self.losses_all_beta1.append(losses)
 		i = 0
-		ax = self.fig.add_subplot(1,5,4)
 		print("start ploting loss with beta1 change")
 		for loss in self.losses_all_beta1:
 			i += 1
 			if (i==1):
-				ax.plot(loss,color='r',label='beta1='+str(self.beta1_rates[i-1]))
+				self.axs[3].plot(loss,color='r',label='beta1='+str(self.beta1_rates[i-1]))
 			elif(i==2):
-				ax.plot(loss,color='g',linestyle='--',label='beta1='+str(self.beta1_rates[i-1]))
+				self.axs[3].plot(loss,color='g',linestyle='--',label='beta1='+str(self.beta1_rates[i-1]))
 			elif(i==3):
-				ax.plot(loss,color='b',linestyle='--',marker='*',label='beta1='+str(self.beta1_rates[i-1]))
+				self.axs[3].plot(loss,color='b',linestyle='--',marker='*',label='beta1='+str(self.beta1_rates[i-1]))
 			elif(i==4):
-				ax.plot(loss,color='y',linestyle='-.',label='beta1='+str(self.beta1_rates[i-1]))
+				self.axs[3].plot(loss,color='y',linestyle='-.',label='beta1='+str(self.beta1_rates[i-1]))
 			elif(i==5):
-				ax.plot(loss,color='k',linestyle=':',label='beta1='+str(self.beta1_rates[i-1]))						
-			ax.legend(loc="upper right")
+				self.axs[3].plot(loss,color='k',linestyle=':',label='beta1='+str(self.beta1_rates[i-1]))						
+			self.axs[3].legend(loc="upper right")
 		# plot('F:/Python-project/Python-Basic-Practise/Lab-NN/lhr_origin/figs/beta1')
 
 	def beta2_tuning(self):
@@ -346,21 +341,20 @@ class TUNING():
 			train(self.x, self.y, 10, 1.2, 1, 'cee', 'ADAM', 0.9, beta2_rate,losses)
 			self.losses_all_beta2.append(losses)
 		i = 0
-		ax = self.fig.add_subplot(1,5,5)
 		print("start ploting loss with beta2 change")
 		for loss in self.losses_all_beta2:
 			i += 1
 			if (i==1):
-				ax.plot(loss,color='r',label='beta2='+str(self.beta2_rates[i-1]))
+				self.axs[4].plot(loss,color='r',label='beta2='+str(self.beta2_rates[i-1]))
 			elif(i==2):
-				ax.plot(loss,color='g',linestyle='--',label='beta2='+str(self.beta2_rates[i-1]))
+				self.axs[4].plot(loss,color='g',linestyle='--',label='beta2='+str(self.beta2_rates[i-1]))
 			elif(i==3):
-				ax.plot(loss,color='b',linestyle='--',marker='*',label='beta2='+str(self.beta2_rates[i-1]))
+				self.axs[4].plot(loss,color='b',linestyle='--',marker='*',label='beta2='+str(self.beta2_rates[i-1]))
 			elif(i==4):
-				ax.plot(loss,color='y',linestyle='-.',label='beta2='+str(self.beta2_rates[i-1]))
+				self.axs[4].plot(loss,color='y',linestyle='-.',label='beta2='+str(self.beta2_rates[i-1]))
 			elif(i==5):
-				ax.plot(loss,color='k',linestyle=':',label='beta2='+str(self.beta2_rates[i-1]))						
-			ax.legend(loc="upper right")
+				self.axs[4].plot(loss,color='k',linestyle=':',label='beta2='+str(self.beta2_rates[i-1]))						
+			self.axs[4].legend(loc="upper right")
 		# plot('F:/Python-project/Python-Basic-Practise/Lab-NN/lhr_origin/figs/beta2')
 		plot('F:/Python-project/Python-Basic-Practise/Lab-NN/lhr_origin/figs/all')
 
