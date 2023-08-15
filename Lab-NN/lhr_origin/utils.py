@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from train import train
+from train import train,train_with_batch_change
 import math
 import model
 
@@ -233,7 +233,7 @@ class TUNING():
 		self.losses_all_beta1 = []
 		self.losses_all_beta2 = []
 		self.losses_all_batch_size = []
-		self.fig, self.axs = plt.subplots(1,5,figsize=(45,5))
+		self.fig, self.axs = plt.subplots(1,6,figsize=(45,5))
 		
 	
 	def lr_tuning(self):
@@ -260,6 +260,9 @@ class TUNING():
 				self.axs[0].plot(loss,color='k',linestyle=':',label='learning_rate='+str(self.learning_rates[i-1]))						
 			self.axs[0].legend(loc="upper right")
 		# plot('F:/Python-project/Python-Basic-Practise/Lab-NN/lhr_origin/figs/l_r')
+		self.axs[0].set_xlabel('iter')
+		self.axs[0].set_ylabel('loss')
+		self.axs[0].set_title('lr vs loss')
 
 	def decay_tuning(self):
 		#学习率衰减调参
@@ -285,6 +288,9 @@ class TUNING():
 				self.axs[1].plot(loss,color='k',linestyle=':',label='decay_rate='+str(self.decay_rates[i-1]))						
 			self.axs[1].legend(loc="upper right")
 		# plot('F:/Python-project/Python-Basic-Practise/Lab-NN/lhr_origin/figs/d_r')
+		self.axs[1].set_xlabel('iter')
+		self.axs[1].set_ylabel('loss')
+		self.axs[1].set_title('dr vs loss')
 
 	def loss_function_tuning(self):
 		#损失函数调参
@@ -306,6 +312,9 @@ class TUNING():
 				self.axs[2].plot(loss,color='b',linestyle='--',marker='*',label='loss_function='+self.loss_functions[i-1])					
 			self.axs[2].legend(loc="upper right")
 		# plot('F:/Python-project/Python-Basic-Practise/Lab-NN/lhr_origin/figs/l_f')
+		self.axs[2].set_xlabel('iter')
+		self.axs[2].set_ylabel('loss')
+		self.axs[2].set_title('lf vs loss')
 
 	def beta1_tuning(self):
 		#Adam优化器beta1调参
@@ -331,6 +340,9 @@ class TUNING():
 				self.axs[3].plot(loss,color='k',linestyle=':',label='beta1='+str(self.beta1_rates[i-1]))						
 			self.axs[3].legend(loc="upper right")
 		# plot('F:/Python-project/Python-Basic-Practise/Lab-NN/lhr_origin/figs/beta1')
+		self.axs[3].set_xlabel('iter')
+		self.axs[3].set_ylabel('loss')
+		self.axs[3].set_title('beta1 vs loss')
 
 	def beta2_tuning(self):
 		#Adam优化器beta2调参
@@ -356,7 +368,9 @@ class TUNING():
 				self.axs[4].plot(loss,color='k',linestyle=':',label='beta2='+str(self.beta2_rates[i-1]))						
 			self.axs[4].legend(loc="upper right")
 		# plot('F:/Python-project/Python-Basic-Practise/Lab-NN/lhr_origin/figs/beta2')
-		plot('F:/Python-project/Python-Basic-Practise/Lab-NN/lhr_origin/figs/all')
+		self.axs[4].set_xlabel('iter')
+		self.axs[4].set_ylabel('loss')
+		self.axs[4].set_title('beta2 vs loss')
 
 	# def batch_tuning(self):
 	# 	num_epochs = 10000
@@ -392,3 +406,29 @@ class TUNING():
 	# 			plt.plot(costs,color='y',linestyle='-.',label='batch_size='+str(self.batch_sizes[i-1]))
 		
 	# 	plot('F:/Python-project/Python-Basic-Practise/Lab-NN/lhr_origin/figs/batch_size')
+
+	def batch_tuning(self):
+		#batch_size调参
+		print("start computing loss with batch_size change")
+		for batch_size in self.batch_sizes:
+			losses = []
+			print("start training with batch_size = " + str(batch_size))
+			train_with_batch_change(self.x,self.y,10,1.2,losses,batch_size)
+			self.losses_all_beta2.append(losses)
+		i = 0
+		print("start ploting loss with batch_size change")
+		for loss in self.losses_all_beta2:
+			i += 1
+			if (i==1):
+				self.axs[5].plot(loss,color='r',label='batch_size='+str(self.batch_sizes[i-1]))
+			elif(i==2):
+				self.axs[5].plot(loss,color='g',linestyle='--',label='batch_size='+str(self.batch_sizes[i-1]))
+			elif(i==3):
+				self.axs[5].plot(loss,color='b',linestyle='--',marker='*',label='batch_size='+str(self.batch_sizes[i-1]))
+			elif(i==4):
+				self.axs[5].plot(loss,color='y',linestyle='-.',label='batch_size='+str(self.batch_sizes[i-1]))					
+			self.axs[5].legend(loc="upper right")
+		self.axs[5].set_xlabel('iter')
+		self.axs[5].set_ylabel('loss')
+		self.axs[5].set_title('batch_size vs loss')
+		plot('F:/Python-project/Python-Basic-Practise/Lab-NN/lhr_origin/figs/all')

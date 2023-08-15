@@ -52,3 +52,34 @@ def train(X, Y, epoch, learning_rate, decay_rate, loss_function, OPTIMIZER, beta
     print(df)
     return parameters, losses
 
+def train_with_batch_change(X,Y,epoch,learning_rate, losses,batch_size):
+    parameters = model.NeutralNetwork().initialize_parameters()
+    m = X.shape[1] # 样本数量
+
+    #开始循环(梯度下降) 无正则
+    for i in range(epoch):
+        #将数据随机打乱
+        permutation = list(np.random.permutation(m))
+        shuffled_X = X[:, permutation]
+        shuffled_Y = Y[:, permutation]
+
+        #分成多个小批量进行训练
+        num_batches = m // batch_size
+        for j in range(num_batches):
+            #获取当前小批量的数据
+            start = j * batch_size
+            end = (j + 1) * batch_size
+            mini_batch_X = shuffled_X[:,start:end]
+            mini_batch_Y = shuffled_Y[:,start:end]
+            #前向传播
+            A2, cache = model.NeutralNetwork().forward_propagation(mini_batch_X, parameters)
+            #计算成本
+            cost = model.NeutralNetwork().compute_cost(A2, Y, 'cee')
+            #反向传播
+            grads = model.NeutralNetwork().backward_propagation(X, Y, cache, parameters) 
+            #更新参数
+            parameters = model.NeutralNetwork().update_parameters(parameters, grads, learning_rate)
+            losses.append(cost)
+
+            print("Cost after epoch %i: %f" % (i, cost))
+    return parameters,losses

@@ -8,6 +8,7 @@ if __name__ == "__main__":
 	lab_nn.loss_function_tuning()
 	lab_nn.beta1_tuning()
 	lab_nn.beta2_tuning()
+	lab_nn.batch_tuning()
 
 
 
