@@ -148,8 +148,8 @@ class Adam():
 		
 		return v, s
 
-	def update_parameters_with_adam(parameters, grads, t, learning_rate = 0.01,
-                                beta1 = 0.9, beta2 = 0.999,  epsilon = 1e-8):
+	def update_parameters_with_adam(parameters, grads, t, learning_rate,
+                                beta1, beta2 ,  epsilon):
 		"""
 		使用Adam更新参数
 		
@@ -414,10 +414,10 @@ class TUNING():
 			losses = []
 			print("start training with batch_size = " + str(batch_size))
 			train_with_batch_change(self.x,self.y,10,1.2,losses,batch_size)
-			self.losses_all_beta2.append(losses)
+			self.losses_all_batch_size.append(losses)
 		i = 0
 		print("start ploting loss with batch_size change")
-		for loss in self.losses_all_beta2:
+		for loss in self.losses_all_batch_size:
 			i += 1
 			if (i==1):
 				self.axs[5].plot(loss,color='r',label='batch_size='+str(self.batch_sizes[i-1]))

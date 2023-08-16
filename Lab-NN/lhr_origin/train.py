@@ -14,7 +14,6 @@ def train(X, Y, epoch, learning_rate, decay_rate, loss_function, OPTIMIZER, beta
 
     #开始循环（梯度下降） 无正则
     for i in range(0, epoch):
-        
         for j in range(0, 1000):  # 每个epoch训练一千次,用_可以避免开辟新变量
             #前向传播
             A2, cache = model.NeutralNetwork().forward_propagation(X, parameters)
@@ -27,7 +26,7 @@ def train(X, Y, epoch, learning_rate, decay_rate, loss_function, OPTIMIZER, beta
                 decay_learning_rate = learning_rate * np.power(decay_rate, (i*1000+j)/1000)  # 实现学习率衰减
                 parameters = model.NeutralNetwork().update_parameters(parameters, grads, decay_learning_rate)
             elif(OPTIMIZER == 'ADAM'):
-                parameters = utils.Adam.update_parameters_with_adam(parameters,grads,i,learning_rate,beta1,beta2,1e-8)
+                parameters = utils.Adam.update_parameters_with_adam(parameters,grads,i*1000+j+1,learning_rate,beta1,beta2,1e-8)
 
             losses.append(cost)
 
@@ -74,9 +73,9 @@ def train_with_batch_change(X,Y,epoch,learning_rate, losses,batch_size):
             #前向传播
             A2, cache = model.NeutralNetwork().forward_propagation(mini_batch_X, parameters)
             #计算成本
-            cost = model.NeutralNetwork().compute_cost(A2, Y, 'cee')
+            cost = model.NeutralNetwork().compute_cost(A2, mini_batch_Y, 'cee')
             #反向传播
-            grads = model.NeutralNetwork().backward_propagation(X, Y, cache, parameters) 
+            grads = model.NeutralNetwork().backward_propagation(mini_batch_X, mini_batch_Y, cache, parameters) 
             #更新参数
             parameters = model.NeutralNetwork().update_parameters(parameters, grads, learning_rate)
             losses.append(cost)
