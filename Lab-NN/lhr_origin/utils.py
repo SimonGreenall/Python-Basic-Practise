@@ -10,6 +10,7 @@ LOSS_FUNCTIONS = ['cee','mse','mae']
 BETA_1 = [0.5, 0.6, 0.7, 0.8, 0.9]
 BETA_2 = [0.995, 0.996, 0.997, 0.998, 0.999]
 BATCH_SIZES = [1,4,8,16]
+EPOCHS = [1,3,5,7,9]
 
 def compute_indexes(predicted,expected): #模块化计算性能指标
 	TP = np.sum(np.logical_and(predicted == 1,expected == 1))
@@ -226,14 +227,16 @@ class TUNING():
 		self.loss_functions = LOSS_FUNCTIONS
 		self.beta1_rates = BETA_1
 		self.beta2_rates = BETA_2
+		self.epochs = EPOCHS
 		self.batch_sizes = BATCH_SIZES
 		self.losses_all_lr = []
 		self.losses_all_decay = []
 		self.losses_all_lf = []
 		self.losses_all_beta1 = []
 		self.losses_all_beta2 = []
+		self.losses_all_epoch = []
 		self.losses_all_batch_size = []
-		self.fig, self.axs = plt.subplots(2,3,figsize=(50,100))
+		self.fig, self.axs = plt.subplots(3,3,figsize=(50,50))
 		
 	
 	def lr_tuning(self):
@@ -371,6 +374,34 @@ class TUNING():
 		self.axs[1][1].set_xlabel('iter')
 		self.axs[1][1].set_ylabel('loss')
 		self.axs[1][1].set_title('beta2 vs loss')
+	
+	def epoch_tuning(self):
+		#epoch调参
+		print("start computing loss with epoch change")
+		for epoch in self.epochs:
+			losses = []
+			print("start training with epoch = " + str(epoch))
+			train(self.x, self.y, epoch, 1.2, 1, 'cee', 'ADAM', 0.9, 0.999,losses)
+			self.losses_all_epoch.append(losses)
+		i = 0
+		print("start ploting loss with epoch change")
+		for loss in self.losses_all_epoch:
+			i += 1
+			if (i==1):
+				self.axs[1][2].plot(loss,color='r',label='epoch='+str(self.epochs[i-1]))
+			elif(i==2):
+				self.axs[1][2].plot(loss,color='g',linestyle='--',label='epoch='+str(self.epochs[i-1]))
+			elif(i==3):
+				self.axs[1][2].plot(loss,color='b',linestyle='--',marker='*',label='epoch='+str(self.epochs[i-1]))
+			elif(i==4):
+				self.axs[1][2].plot(loss,color='y',linestyle='-.',label='epoch='+str(self.epochs[i-1]))
+			elif(i==5):
+				self.axs[1][2].plot(loss,color='k',linestyle=':',label='epoch='+str(self.epochs[i-1]))						
+			self.axs[1][2].legend(loc="upper right")
+		# plot('F:/Python-project/Python-Basic-Practise/Lab-NN/lhr_origin/figs/beta2')
+		self.axs[1][2].set_xlabel('iter')
+		self.axs[1][2].set_ylabel('loss')
+		self.axs[1][2].set_title('epoch vs loss')
 
 	def batch_tuning(self):
 		#batch_size调参
@@ -385,15 +416,15 @@ class TUNING():
 		for loss in self.losses_all_batch_size:
 			i += 1
 			if (i==1):
-				self.axs[1][2].plot(loss,color='r',label='batch_size='+str(self.batch_sizes[i-1]))
+				self.axs[2][0].plot(loss,color='r',label='batch_size='+str(self.batch_sizes[i-1]))
 			elif(i==2):
-				self.axs[1][2].plot(loss,color='g',linestyle='--',label='batch_size='+str(self.batch_sizes[i-1]))
+				self.axs[2][0].plot(loss,color='g',linestyle='--',label='batch_size='+str(self.batch_sizes[i-1]))
 			elif(i==3):
-				self.axs[1][2].plot(loss,color='b',linestyle='--',marker='*',label='batch_size='+str(self.batch_sizes[i-1]))
+				self.axs[2][0].plot(loss,color='b',linestyle='--',marker='*',label='batch_size='+str(self.batch_sizes[i-1]))
 			elif(i==4):
-				self.axs[1][2].plot(loss,color='y',linestyle='-.',label='batch_size='+str(self.batch_sizes[i-1]))					
-			self.axs[1][2].legend(loc="upper right")
-		self.axs[1][2].set_xlabel('iter')
-		self.axs[1][2].set_ylabel('loss')
-		self.axs[1][2].set_title('batch_size vs loss')
+				self.axs[2][0].plot(loss,color='y',linestyle='-.',label='batch_size='+str(self.batch_sizes[i-1]))					
+			self.axs[2][0].legend(loc="upper right")
+		self.axs[2][0].set_xlabel('iter')
+		self.axs[2][0].set_ylabel('loss')
+		self.axs[2][0].set_title('batch_size vs loss')
 		plot('F:/Python-project/Python-Basic-Practise/Lab-NN/lhr_origin/figs/all')
