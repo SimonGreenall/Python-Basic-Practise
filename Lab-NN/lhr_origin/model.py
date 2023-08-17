@@ -29,7 +29,6 @@ class NeutralNetwork():
 			b1 = parameters["b1"]
 			W2 = parameters["W2"]
 			b2 = parameters["b2"]
-
 			# 实现前向传播计算A2(输出结果)
 			Z1 = np.dot(W1, X) + b1
 			A1 = np.tanh(Z1)

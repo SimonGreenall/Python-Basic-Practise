@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from train import train,train_with_batch_change
+from train import train,train_with_batch_change,train_test
 import math
 import model
 
@@ -236,7 +236,8 @@ class TUNING():
 		self.losses_all_beta2 = []
 		self.losses_all_epoch = []
 		self.losses_all_batch_size = []
-		self.fig, self.axs = plt.subplots(3,3,figsize=(50,50))
+		self.losses_all_best = []
+		self.fig,self.axs= plt.subplots(3,3,figsize=(30,30))
 		
 	
 	def lr_tuning(self):
@@ -427,4 +428,31 @@ class TUNING():
 		self.axs[2][0].set_xlabel('iter')
 		self.axs[2][0].set_ylabel('loss')
 		self.axs[2][0].set_title('batch_size vs loss')
+
+	def best_parameters(self):
+		print("start best")
+		losses = []
+		parameters,losses=train(self.x, self.y, 10, 1.2, 0.98, 'cee', 'SGD', 0.9, 0.999,losses)
+		self.losses_all_best.append(losses)
+		for loss in self.losses_all_best:
+			self.axs[2][1].plot(loss,color='r',label='best')
+			self.axs[2][1].legend(loc="upper right")
+		self.axs[2][1].set_xlabel('iter')
+		self.axs[2][1].set_ylabel('loss')
+		self.axs[2][1].set_title('best vs loss')
+		self.fig.delaxes(self.axs[2,2])
 		plot('F:/Python-project/Python-Basic-Practise/Lab-NN/lhr_origin/figs/all')
+		print("best parameters: \n epoch = 10 \n learning_rate = 1.2\n decay_rate = 0.98 \n loss_function = 'cee' \n beta1 = 0.9 \n beta2 = 0.999")
+
+		#测试训练效果
+		test= [[1,0,1],
+	 		   [1,0,0],
+			   [0,0,0],
+			   [0,0,0],
+			   [0,0,0],
+			   [0,0,0],
+			   [0,0,0],
+			   [0,0,0]]
+		test_X = test_Y = np.array(test)
+		train_test(test_X, test_Y, parameters, 10, 1.2, 1, 'cee', 'ADAM', 0.9, 0.999,losses)
+		

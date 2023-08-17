@@ -10,6 +10,7 @@ if __name__ == "__main__":
 	lab_nn.beta2_tuning()
 	lab_nn.epoch_tuning()
 	lab_nn.batch_tuning()
+	lab_nn.best_parameters()
 
 
 
