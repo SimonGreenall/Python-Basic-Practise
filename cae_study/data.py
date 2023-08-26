@@ -8,7 +8,7 @@ from torch.utils.data import ConcatDataset
 class DataLoader_CIFAR10():
 	
 	def __init__(self):
-		#数据预处理	
+		#数据预处理,对数据做变换
 		self.transform_train = transforms.Compose([
 			transforms.RandomCrop(32, padding=4),
     		transforms.RandomHorizontalFlip(),

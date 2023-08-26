@@ -1,9 +1,10 @@
 from utills import * #超参数准备
-import torch.optim as optim
-from train import train
+import torch.optim as optim #准备优化器
+from train import train #准备训练函数
 from predict import predict
-from data import DataLoader_CIFAR10
-from model import ConvAutoEncoder
+from data import DataLoader_CIFAR10 #准备数据集
+from model import ConvAutoEncoder #准备我们写好的CAE模型
+import matplotlib.pyplot as plt #准备画图工具
 
 if __name__ == "__main__":
 	#数据准备
@@ -17,10 +18,20 @@ if __name__ == "__main__":
 
 	#构建模型
 	net = ConvAutoEncoder()
-	optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4) #构建优化器
-	scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=200)
+	optimizer = optim.SGD(net.parameters(), lr=l_r, momentum=0.9, weight_decay=5e-4) #构建SGD优化器
 
 	#训练
-	train(10,net,trainset_loader,optimizer)
+	losses = []
+	for i in range(epoch):
+		loss = train(i+1,net,trainset_loader,optimizer)
+		losses.append(loss)
+	
+	plt.plot(loss,color='r')
+	plt.xlabel('iter')
+	plt.ylabel('loss')
+	plt.grid()
+	plt.show()
+	print("success")
+	
 	
 	
