@@ -17,7 +17,7 @@ class ConvAutoEncoder(nn.Module):
 		self.conv5 = nn.Conv2d(12,3,3) #表示输入图像通道数为12，卷积产生的通道数为3，卷积核尺寸为3×3
 
 	def forward(self, x):
-		x = self.conv1(x) #输入经过第一个卷积层
+		x = self.conv1(x) #输入经过第一个卷积层（在_init_里设定好Conv2D的参数，赋给conv1，然后就能通过x = self.conv1(x)的方式让inputs通过conv1，这肯定是继承的模块设定好的，而且在train.py里还不用特地调用net.forward(inputs)，就直接net(inputs)，就能自动对上这里的x，这肯定也是继承的父类模块设定好的，不要纠结！）
 		x = F.relu(x) #激活
 		x = F.max_pool2d(x,2) #对输入进行最大池化，且最大池化窗口为2×2
 		x = self.bn1(x) #批归一化
